@@ -3,6 +3,7 @@ package assignment5;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +45,6 @@ public abstract class Critter {
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 	private static HashSet<String> occupied = new HashSet<String>();
-	private static HashSet<String> prevOccupied = new HashSet<String>();
 	private static HashMap<String, ArrayList<Critter>> prevWorld = new HashMap<String, ArrayList<Critter>>();
 	private boolean hasMoved;
 	private boolean fighting;
@@ -95,9 +95,34 @@ public abstract class Critter {
 		
 		String nextPos = Integer.toString(nextX) + " " + Integer.toString(nextY);
 		String crit = null;
-		if(prevWorld.containsKey(nextPos)){
-			crit = prevWorld.get(nextPos).get(0).toString();
+		if(this.fighting){
+			Iterator<String> it = occupied.iterator();
+			HashSet<String> temp = new HashSet<String>(); //holds the values of occupied
+			//while the new world hashmap is being computed, so they can be put back into occupied later
+			while(it.hasNext()){
+				String clone = it.next();
+				temp.add(clone);
+			}
+			occupied.clear();
+			HashMap<String, ArrayList<Critter>> currentWorld = generateWorldMap();
+			if(currentWorld.containsKey(nextPos)){
+				crit = currentWorld.get(nextPos).get(0).toString();
+				/*
+				 * poosible corner case of multiple critters in the same spot during look
+				 * do we just print the string of one of the characters arbitrarily or 
+				 * should we print both of them?
+				 */
+			}
+			occupied = temp; // I think this is okay, I don't think occupied will be emptied
+			//when temp goes out of scope. But if it does, just implement another iterator
+			
 		}
+		else{
+			if(prevWorld.containsKey(nextPos)){
+				crit = prevWorld.get(nextPos).get(0).toString();
+			}
+		}
+		this.energy -= Params.look_energy_cost;
 		return crit;
 	}
 	
@@ -239,8 +264,6 @@ public abstract class Critter {
 		
 		//Resolve conflicts
 		resolveOverlap();
-		prevOccupied.clear();
-		prevOccupied = occupied;
 		occupied.clear();
 		
 		//remove dead critters from collection after updating energy
