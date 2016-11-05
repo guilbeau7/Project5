@@ -7,6 +7,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+
 
 
 
@@ -274,6 +287,7 @@ public abstract class Critter {
 				dead.add(c);
 			}
 		}
+		
 		population.removeAll(dead);
 		
 		//add new Algae into the population
@@ -296,6 +310,18 @@ public abstract class Critter {
 		for(Critter crit : population){
 			crit.hasMoved = false;
 		}
+	}
+	
+	public static void clearMap(){
+		ObservableList<Node> children = Main.grid.getChildren();
+		StackPane current;
+	    for (Node node : children) {
+	    	if (node instanceof StackPane){
+	    		Rectangle r = (Rectangle) ((StackPane) node).getChildren().get(0);
+	    		((StackPane) node).getChildren().clear();
+	    		((StackPane) node).getChildren().add(r);
+	    	} 
+	    }
 	}
 	
 	/**
@@ -395,45 +421,69 @@ public abstract class Critter {
 	 * Prints out 2D representation of the population with a border around it
 	 */
 	public static void displayWorld() {
-		int width = Params.world_width + 2;
-		int height = Params.world_height + 2;
-		String[][] world = new String[height][width];
-		
-		//add border to world
-		for (int row =  0; row < height; row++){
-			for (int col = 0; col < width; col++){
-				//handle borders of grid
-				if (row == 0 || row == height - 1){ //if you are on the top or bottom row need to handle corners
-					if (col == 0 || col == width - 1){
-						world[row][col] = "+";
-					} else {
-						world[row][col] = "-";
-					}
-				} 
-				else if (col == 0 || col == width - 1) { //if you are on first or last col put pipe
-						world[row][col] = "|";
-				} else {
-					world[row][col] = " "; //fill rest of spaces with " "
-				}
-			}
-		}
+		clearMap();
 		
 		//add in critter data
 		for (Critter c : population) {
-			world[c.y_coord + 1][c.x_coord + 1] = c.toString();
+			switch(c.viewShape()){
+			case CIRCLE:
+				Circle circ = new Circle(3);
+				addShape(circ, c);
+				break;
+				
+			case SQUARE:
+				Rectangle rec = new Rectangle(4, 4);
+				addShape(rec, c);
+				break;
+
+			case TRIANGLE:
+				Polygon triangle = new Polygon();
+		        triangle.getPoints().addAll(new Double[]{
+		            3.0, 0.0,
+		            0.0, 5.0,
+		            6.0, 5.0 });
+		        addShape(triangle, c);
+				break;
+				
+			case DIAMOND:
+				Polygon diamond = new Polygon();
+		        diamond.getPoints().addAll(new Double[]{
+		            3.0, 0.0,
+		            0.0, 2.5,
+		            3.0, 5.0,
+		            6.0, 2.5});
+		        addShape(diamond, c);
+				break;
+				
+			case STAR:
+				Polygon star = new Polygon();
+		        star.getPoints().addAll(new Double[]{
+		            3.0, 0.0,
+		            2.3, 1.75,
+		            0.0, 1.75,
+		            1.5, 2.5,
+		            1.0, 4.0,
+		            3.0, 2.55,
+		            5.0, 4.0,
+		            4.5, 2.5,
+		            6.0, 1.75,
+		            3.7, 1.75});
+		        addShape(star, c);
+				break;
+			}
 			
 		}
-		
-		//print result
-		for (int row =  0; row < height; row++){
-			for (int col = 0; col < width; col++){
-				if (col == width - 1){
-					System.out.println(world[row][col]);
-				} else {
-					System.out.print(world[row][col]);
-				}
-			}
-		}
+	}
+	
+	public static void addShape(Shape s, Critter c){
+		StackPane current = CritterButtons.getNodeByRowColumnIndex(c.x_coord, c.y_coord, Main.grid);
+		Rectangle r = (Rectangle) current.getChildren().get(0);
+		s.setFill(c.viewFillColor());
+		s.setStroke(c.viewOutlineColor());
+		StackPane.setAlignment(s, Pos.CENTER);
+		s.scaleXProperty().bind(r.widthProperty().divide(14));
+		s.scaleYProperty().bind(r.heightProperty().divide(14));
+		current.getChildren().add(s);
 	}
 	
 	/* create and initialize a Critter subclass
