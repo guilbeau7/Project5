@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -35,6 +37,7 @@ public class Main extends Application{
 
 	static AnchorPane root = new AnchorPane();
 	static GridPane grid = new GridPane();
+	static Stage Controller = new Stage();
 	static Stage critterDisplay = new Stage();
 	
 	public static void main(String[] args) {
@@ -43,13 +46,14 @@ public class Main extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Critter Controller");
+		Controller.setTitle("Critter Controller");
 		critterDisplay.setTitle("Critter World");
-	    setIntro(primaryStage);
+	    setIntro(Controller);
 		createWorld(grid);
 		root.getChildren().add(grid);
 		critterDisplay.setScene(new Scene(root, 600, 600));
-		primaryStage.show();
+		Controller.setAlwaysOnTop(true);
+		Controller.show();
 		critterDisplay.show();
 	}
 	
@@ -86,7 +90,7 @@ public class Main extends Application{
 				s.strokeWidthProperty().bind(s.heightProperty().multiply(0.009));;
 				s.setFill(javafx.scene.paint.Color.WHITE);
 				
-				//position rects (this depends on pane size as well)
+				//position rectangles
 	            s.xProperty().bind(rectsAreaSize.multiply(i).divide(Params.world_width + 1));
 	            s.yProperty().bind(rectsAreaSize.multiply(j).divide(Params.world_height + 1));
 
@@ -105,23 +109,22 @@ public class Main extends Application{
 		CritterButtons.makeCount.setPromptText("Enter Number of Critters to Make");
 		
 		VBox vbox = new VBox();
+		CritterButtons.setUpButtons();
 		vbox.getChildren().add(new Text("Control Panel"));
 		vbox.getChildren().add(CritterButtons.seedCount);
-		vbox.getChildren().add(CritterButtons.seedButton());
+		vbox.getChildren().add(CritterButtons.seedButton);
 		vbox.getChildren().add(CritterButtons.stepCount);
-		vbox.getChildren().add(CritterButtons.stepButton());
-		CritterButtons.createClassDropDown();
+		vbox.getChildren().add(CritterButtons.stepButton);
 		vbox.getChildren().add(CritterButtons.critterSelection);
 		vbox.getChildren().add(CritterButtons.makeCount);
-		vbox.getChildren().add(CritterButtons.createCritterButton());
+		vbox.getChildren().add(CritterButtons.makeButton);
 		vbox.getChildren().add(CritterButtons.critterStatsSelection);
 		vbox.getChildren().add(CritterButtons.statsField);
-		CritterButtons.statsField.setDisable(true);
-		vbox.getChildren().add(CritterButtons.quitButton());
+		vbox.getChildren().add(CritterButtons.runSpeed);
+		vbox.getChildren().add(CritterButtons.animationButton);
+		vbox.getChildren().add(CritterButtons.quitButton);
 		Scene s = new Scene(vbox, 500, 500);
 		window.setScene(s);
 	}
-
-	
 }
 
