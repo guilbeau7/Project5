@@ -57,6 +57,7 @@ public class Main extends Application{
 		createWorld(grid);
 		root.getChildren().add(grid);
 		critterDisplay.setScene(new Scene(root, 600, 600));
+		critterDisplay.sizeToScene();
 		Controller.setAlwaysOnTop(true);
 		Controller.show();
 		critterDisplay.show();
@@ -83,8 +84,9 @@ public class Main extends Application{
 	 * @param world
 	 */
 	public static void createWorld(GridPane world){
-		// this binding will find out which parameter is smaller: height or width
+		//find out which parameter is smaller: height or width
 	    NumberBinding rectsAreaSize = Bindings.min(root.heightProperty(), root.widthProperty());
+
 	    
 		for (int i = 0; i < Params.world_width; i++){
 			for (int j = 0; j < Params.world_height; j++){
@@ -99,9 +101,15 @@ public class Main extends Application{
 	            s.xProperty().bind(rectsAreaSize.multiply(i).divide(Params.world_width + 1));
 	            s.yProperty().bind(rectsAreaSize.multiply(j).divide(Params.world_height + 1));
 
-	            //bind rectangle size to pane size 
-	            s.heightProperty().bind(rectsAreaSize.divide(Params.world_width + 1));
-	            s.widthProperty().bind(s.heightProperty());
+	            //bind rectangle size to pane size
+	            if (Params.world_width > Params.world_height){
+	            	s.widthProperty().bind(rectsAreaSize.divide(Params.world_width + 1));
+		            s.heightProperty().bind(s.widthProperty());
+	            } else {
+	            	s.heightProperty().bind(rectsAreaSize.divide(Params.world_height + 1));
+	            	s.widthProperty().bind(s.heightProperty());
+	            }
+	            
 				spot.getChildren().add(s);
 				world.add(spot, i, j);
 			}
@@ -113,14 +121,10 @@ public class Main extends Application{
 		CritterButtons.seedCount.setPromptText("Enter Seed Number");
 		CritterButtons.makeCount.setPromptText("Enter Number of Critters to Make");
 		
-//		VBox vbox = new VBox();
 		CritterButtons.setUpButtons();
-		//vbox.setSpacing(10.0);
-		//
+		
 		BorderPane border = new BorderPane();
-		//border.setPadding(new Insets(10, 20, 10, 20));
 		StackPane top = new StackPane();
-		//top.setPadding(new Insets(10,20,10,20));
 		border.setTop(top);
 		Label title = new Label("Control Panel");
 		title.setFont(new Font("Algerian", 32));
@@ -130,25 +134,39 @@ public class Main extends Application{
 		VBox vbox = new VBox();
 		border.setCenter(vbox);
 		
-		
+		VBox seedSection = new VBox(10);
+		Label seedTitle = new Label("Set Seed Number:");
+		seedTitle.setFont(new Font(18));
+		seedSection.getChildren().add(seedTitle);
+		seedSection.setPadding(new Insets(10,20,10,20));
 		HBox seed = new HBox(10);
 		seed.getChildren().add(CritterButtons.seedCount);
 		seed.getChildren().add(CritterButtons.seedButton);
-		seed.setPadding(new Insets(10,20,10,20));
-		vbox.getChildren().add(seed);
+		seedSection.getChildren().add(seed);
+		vbox.getChildren().add(seedSection);
 		
+		VBox stepSection = new VBox(10);
+		Label stepTitle = new Label("Set Step Number:");
+		stepTitle.setFont(new Font(18));
+		stepSection.getChildren().add(stepTitle);
+		stepSection.setPadding(new Insets(10,20,10,20));
 		HBox step = new HBox(10);
 		step.getChildren().add(CritterButtons.stepCount);
 		step.getChildren().add(CritterButtons.stepButton);
-		step.setPadding(new Insets(10,20,10,20));
-		vbox.getChildren().add(step);
+		stepSection.getChildren().add(step);
+		vbox.getChildren().add(stepSection);
 		
+		VBox makeSection = new VBox(10);
+		Label makeTitle = new Label("Set Make Number:");
+		makeTitle.setFont(new Font(18));
+		makeSection.getChildren().add(makeTitle);
+		makeSection.setPadding(new Insets(10,20,10,20));
 		HBox make = new HBox(10);
 		make.getChildren().add(CritterButtons.makeCount);
 		make.getChildren().add(CritterButtons.critterSelection);
 		make.getChildren().add(CritterButtons.makeButton);
-		make.setPadding(new Insets(10,20,10,20));
-		vbox.getChildren().add(make);
+		makeSection.getChildren().add(make);
+		vbox.getChildren().add(makeSection);
 		
 		HBox stats = new HBox(10);
 		Label instructions = new Label("Choose a critter to observe:");
@@ -162,44 +180,62 @@ public class Main extends Application{
 		Label st = new Label("Stats:");
 		statField.getChildren().add(st);
 		CritterButtons.statsField.setWrapText(true);
+		CritterButtons.statsField.setText("Stats Displayed Here");
 		statField.getChildren().add(CritterButtons.statsField);
-		statField.setPadding(new Insets(10,20,10,20));
+		statField.setPadding(new Insets(10,20,25,20));
 		vbox.getChildren().add(statField);
 		
-		HBox speed = new HBox(10);
+		VBox animationSection = new VBox();
+		Label aTitle = new Label("Set Animation:");
+		aTitle.setFont(new Font(18));
+		aTitle.setAlignment(Pos.CENTER);
+		animationSection.getChildren().add(aTitle);
+		animationSection.setPadding(new Insets(10,20,10,20));
+		HBox speed = new HBox(30);
+		Label setSpeed = new Label("Set Speed:");
+		speed.getChildren().add(setSpeed);
 		speed.getChildren().add(CritterButtons.runSpeed);
 		speed.setPadding(new Insets(10,20,10,20));
-		vbox.getChildren().add(speed);
+		speed.setAlignment(Pos.CENTER);
+		animationSection.getChildren().add(speed);
 		
-		HBox run = new HBox(200);
+		
+		HBox run = new HBox(10);
 		run.getChildren().add(CritterButtons.animationButton);
-		run.getChildren().add(CritterButtons.quitButton);
 		run.setPadding(new Insets(10,20,10,20));
-		vbox.getChildren().add(run);
+		run.setAlignment(Pos.CENTER);
+		animationSection.getChildren().add(run);
+		animationSection.setAlignment(Pos.CENTER);
+		vbox.getChildren().add(animationSection);
+		
+		HBox quit = new HBox(10);
+		quit.getChildren().add(CritterButtons.quitButton);
+		quit.setPadding(new Insets(10,20,10,20));
+		quit.setAlignment(Pos.CENTER);
+		vbox.getChildren().add(quit);
 		
 		
-		
-	
-		
-		
-		Scene s = new Scene(border,500,500);
+		Scene s = new Scene(border,500,590);
 		window.setScene(s);
-		//
-		//vbox.getChildren().add(new Text("Control Panel"));
-//		vbox.getChildren().add(CritterButtons.seedCount);
-//		vbox.getChildren().add(CritterButtons.seedButton);
-//		vbox.getChildren().add(CritterButtons.stepCount);
-//		vbox.getChildren().add(CritterButtons.stepButton);
-//		vbox.getChildren().add(CritterButtons.critterSelection);
-//		vbox.getChildren().add(CritterButtons.makeCount);
-//		vbox.getChildren().add(CritterButtons.makeButton);
-//		vbox.getChildren().add(CritterButtons.critterStatsSelection);
-//		vbox.getChildren().add(CritterButtons.statsField);
-//		vbox.getChildren().add(CritterButtons.runSpeed);
-//		vbox.getChildren().add(CritterButtons.animationButton);
-//		vbox.getChildren().add(CritterButtons.quitButton);
-//		Scene s = new Scene(vbox, 500, 500);
-//		window.setScene(s);
+		
+		/*
+		VBox vbox = new VBox();
+		vbox.getChildren().add(new Text("Control Panel"));
+		vbox.getChildren().add(CritterButtons.seedCount);
+		vbox.getChildren().add(CritterButtons.seedButton);
+		vbox.getChildren().add(CritterButtons.stepCount);
+		vbox.getChildren().add(CritterButtons.stepButton);
+		vbox.getChildren().add(CritterButtons.critterSelection);
+		vbox.getChildren().add(CritterButtons.makeCount);
+		vbox.getChildren().add(CritterButtons.makeButton);
+		vbox.getChildren().add(CritterButtons.critterStatsSelection);
+		vbox.getChildren().add(CritterButtons.statsField);
+		vbox.getChildren().add(CritterButtons.runSpeed);
+		vbox.getChildren().add(CritterButtons.animationButton);
+		vbox.getChildren().add(CritterButtons.quitButton);
+		Scene s = new Scene(vbox, 500, 500);
+		window.setScene(s);
+		*/
 	}
 }
 

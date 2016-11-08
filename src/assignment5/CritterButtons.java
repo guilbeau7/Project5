@@ -64,6 +64,7 @@ public class CritterButtons {
 		items.add(critterStatsSelection);
 		items.add(runSpeed);
 		items.add(makeCount);
+		items.add(stepCount);
 	}
 	
 	public static void stepButton(){
