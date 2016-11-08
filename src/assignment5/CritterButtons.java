@@ -16,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -30,7 +31,7 @@ public class CritterButtons {
 	static TextField stepCount = new TextField();
 	static TextField seedCount = new TextField();
 	static TextField makeCount = new TextField();
-	static TextField statsField = new TextField();
+	static Label statsField = new Label();
 	static Slider runSpeed;
 	static boolean animationRunning = false;
 	static Button quitButton;
@@ -54,7 +55,6 @@ public class CritterButtons {
 		animationButton();
 		quitButton();
 		createClassDropDown();
-		statsField.setDisable(true);
 		setUpSlider();
 		items = new ArrayList<Node>();
 		items.add(seedButton);
@@ -120,11 +120,14 @@ public class CritterButtons {
 		dontInclude.add("Header.java");
 		dontInclude.add("CritterButtons.java");
 		dontInclude.add("CountDown.java");
-		
+
 		//populate arraylist with options
 		File[] files = current.listFiles();
 		for (File f : files){
-			String strippedName = f.toString().replaceFirst("./src/assignment5/", "");
+			String strippedName = f.toString().replace("\\", "/");
+			strippedName = strippedName.replaceFirst("./src/assignment5/", "");
+			//String strippedName = f.toString().replaceFirst("./src/assignment5/", "");
+
 			if (!dontInclude.contains(strippedName)){
 				strippedName = strippedName.replaceFirst(".java", "");
 				l.add(strippedName);
