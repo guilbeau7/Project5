@@ -476,7 +476,7 @@ public abstract class Critter {
 	}
 	
 	public static void addShape(Shape s, Critter c){
-		StackPane current = CritterButtons.getNodeByRowColumnIndex(c.x_coord, c.y_coord, Main.grid);
+		StackPane current = CritterButtons.getNodeByRowColumnIndex(c.y_coord, c.x_coord, Main.grid);
 		Rectangle r = (Rectangle) current.getChildren().get(0);
 		s.setFill(c.viewFillColor());
 		s.setStroke(c.viewOutlineColor());
