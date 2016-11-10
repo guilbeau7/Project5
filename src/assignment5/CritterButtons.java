@@ -1,3 +1,15 @@
+/* CRITTERS GUI CritterButtons.java
+ * EE422C Project 4b submission by
+ * Josh Minor
+ * jm78724
+ * 16445
+ * Andrew Guilbeau
+ * abg926
+ * 16460
+ * Slip days used: <0>
+ * Fall 2016
+ */
+
 package assignment5;
 
 
@@ -23,6 +35,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class CritterButtons {
@@ -32,6 +45,9 @@ public class CritterButtons {
 	static TextField seedCount = new TextField();
 	static TextField makeCount = new TextField();
 	static Label statsField = new Label();
+	static Label errorMessageStep = new Label("Please Enter Valid Number");
+	static Label errorMessageSeed = new Label("Please Enter Valid Number");
+	static Label errorMessageMake = new Label("Please Enter Valid Number");
 	static Slider runSpeed;
 	static boolean animationRunning = false;
 	static Button quitButton;
@@ -48,6 +64,10 @@ public class CritterButtons {
         myPackage = Critter.class.getPackage().toString().split(" ")[1];
     }
 	
+    /*
+     * Sets up all buttons in the class
+     * Adds all buttons which are to be disabled to items
+     */
 	public static void setUpButtons(){
 		seedButton();
 		stepButton();
@@ -56,6 +76,7 @@ public class CritterButtons {
 		quitButton();
 		createClassDropDown();
 		setUpSlider();
+		setUpErrorLabels();
 		items = new ArrayList<Node>();
 		items.add(seedButton);
 		items.add(stepButton);
@@ -65,8 +86,27 @@ public class CritterButtons {
 		items.add(runSpeed);
 		items.add(makeCount);
 		items.add(stepCount);
+		items.add(seedCount);
 	}
 	
+	/*
+	 * Set up label properties
+	 */
+	public static void setUpErrorLabels(){
+		errorMessageSeed.setTextFill(javafx.scene.paint.Color.RED);
+		errorMessageSeed.setVisible(false);
+		errorMessageSeed.setFont(new Font(12.0));
+		errorMessageStep.setTextFill(javafx.scene.paint.Color.RED);
+		errorMessageStep.setVisible(false);
+		errorMessageStep.setFont(new Font(12.0));
+		errorMessageMake.setTextFill(javafx.scene.paint.Color.RED);
+		errorMessageMake.setVisible(false);
+		errorMessageMake.setFont(new Font(12.0));
+	}
+	
+	/*
+	 * Sets up step button
+	 */
 	public static void stepButton(){
 		Button btn = new Button();
 		btn.setText("Step");
@@ -77,17 +117,21 @@ public class CritterButtons {
             		for (int i = 0; i < Integer.parseInt(stepCount.getText()); i++){
                 		Critter.worldTimeStep();
                         Critter.displayWorld();
+                        errorMessageStep.setVisible(false);
                 	}
                     displayStats();
             	} catch(Exception e){
             		//Create new textField for an error message
+                    errorMessageStep.setVisible(true);
             	}
             }
         });
 		stepButton = btn;
 	}
 	
-	
+	/*
+	 * Sets up seed button
+	 */
 	public static void seedButton(){
 		Button btn = new Button();
 		btn.setText("Set Seed");
@@ -96,8 +140,11 @@ public class CritterButtons {
             public void handle(ActionEvent event) {
             	try{
                 	Critter.setSeed(Integer.parseInt(seedCount.getText()));
+                    errorMessageSeed.setVisible(false);
             	} catch(NumberFormatException e){
             		//Create new textField for an error message
+                    errorMessageSeed.setVisible(true);
+
             	}
             }
         });
@@ -125,9 +172,9 @@ public class CritterButtons {
 		//populate arraylist with options
 		File[] files = current.listFiles();
 		for (File f : files){
+			//accounts for windows versus mac file paths
 			String strippedName = f.toString().replace("\\", "/");
 			strippedName = strippedName.replaceFirst("./src/assignment5/", "");
-			//String strippedName = f.toString().replaceFirst("./src/assignment5/", "");
 
 			if (!dontInclude.contains(strippedName)){
 				strippedName = strippedName.replaceFirst(".java", "");
@@ -138,10 +185,14 @@ public class CritterButtons {
 		options = FXCollections.observableList(l);
 		critterSelection = new ComboBox<String>(options);
 		critterStatsSelection = new ComboBox<String>(options);
+		//default both to algae
 		critterSelection.setValue("Algae");
 		critterStatsSelection.setValue("Algae");
 	}
 	
+	/*
+	 * Sets up start button
+	 */
 	public static Button startButton(Stage window){
 		Button btn = new Button("CENTER");
 		
@@ -158,6 +209,9 @@ public class CritterButtons {
 		return btn;
 	}
 	
+	/*
+	 * Sets up make button
+	 */
 	public static void makeButton(){
 		Button btn = new Button();
 		btn.setText("Make Critter");
@@ -167,15 +221,19 @@ public class CritterButtons {
                 try {
                 	for (int i = 0; i < Integer.parseInt(makeCount.getText()); i++){
                 		Critter.makeCritter(critterSelection.getValue().toString());
+                        errorMessageMake.setVisible(false);
                 	}
-				} catch (InvalidCritterException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+                    errorMessageMake.setVisible(true);
 				}
             }
         });
 		makeButton = btn;
 	}
 	
+	/*
+	 * Sets up quit button
+	 */
 	public static void quitButton(){
 		Button btn = new Button();
 		btn.setText("Quit");
@@ -188,6 +246,9 @@ public class CritterButtons {
 		quitButton = btn;
 	}
 	
+	/*
+	 * Sets up display stats button
+	 */
 	public static void displayStats() {
 		ByteArrayOutputStream b = new ByteArrayOutputStream();
 	    PrintStream ps = new PrintStream(b);
@@ -211,6 +272,9 @@ public class CritterButtons {
 		statsField.setText(b.toString());
 	}
 	
+	/*
+	 * Gets a node in the gridpane given its row and column in the pane
+	 */
 	public static StackPane getNodeByRowColumnIndex (final int row, final int column, GridPane gridPane) {
 	    StackPane result = null;
 	    ObservableList<Node> children = gridPane.getChildren();
@@ -227,6 +291,9 @@ public class CritterButtons {
 	    return result;
 	}
 	
+	/*
+	 * Sets up animation speed slider
+	 */
 	public static void setUpSlider(){
 		runSpeed = new Slider(1, 10, 1);
 		runSpeed.setShowTickMarks(true);
@@ -235,6 +302,9 @@ public class CritterButtons {
 		runSpeed.setBlockIncrement(0.1f);
 	}
 	
+	/*
+	 * Sets up play button
+	 */
 	public static void animationButton(){
 		Image playImage = new Image("PlayButton.png");
 		Image pauseImage = new Image("PauseButton.png");
@@ -268,18 +338,27 @@ public class CritterButtons {
 		animationButton = play;
 	}
 	
+	/*
+	 * Disables all items in the items arraylist
+	 */
 	public static void disableAllItems(){
 		for (Node b : items){
 			b.disableProperty().set(true);
 		}
 	}
 	
+	/*
+	 * Reenables all items in the items arraylist
+	 */
 	public static void enableAllItems(){
 		for (Node b : items){
 			b.disableProperty().set(false);
 		}
 	}
 	
+	/*
+	 * Sets up timer to countdown task
+	 */
 	public static void animate(){
 		t = new Timer(true);
         t.scheduleAtFixedRate(new CountDown(t), 0, (long) (1000 / runSpeed.getValue()));

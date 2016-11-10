@@ -1,3 +1,15 @@
+/* CRITTERS GUI Critter.java
+ * EE422C Project 4b submission by
+ * Josh Minor
+ * jm78724
+ * 16445
+ * Andrew Guilbeau
+ * abg926
+ * 16460
+ * Slip days used: <0>
+ * Fall 2016
+ */
+
 package assignment5;
 
 import java.util.ArrayList;
@@ -120,11 +132,6 @@ public abstract class Critter {
 			HashMap<String, ArrayList<Critter>> currentWorld = generateWorldMap();
 			if(currentWorld.containsKey(nextPos)){
 				crit = currentWorld.get(nextPos).get(0).toString();
-				/*
-				 * poosible corner case of multiple critters in the same spot during look
-				 * do we just print the string of one of the characters arbitrarily or 
-				 * should we print both of them?
-				 */
 			}
 			occupied = temp; // I think this is okay, I don't think occupied will be emptied
 			//when temp goes out of scope. But if it does, just implement another iterator
@@ -132,6 +139,7 @@ public abstract class Critter {
 		}
 		else{
 			if(prevWorld.containsKey(nextPos)){
+				if (prevWorld.get(nextPos).size() > 0)
 				crit = prevWorld.get(nextPos).get(0).toString();
 			}
 		}

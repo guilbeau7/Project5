@@ -1,3 +1,15 @@
+/* CRITTERS GUI InvalidCritterException.java
+ * EE422C Project 4b submission by
+ * Josh Minor
+ * jm78724
+ * 16445
+ * Andrew Guilbeau
+ * abg926
+ * 16460
+ * Slip days used: <0>
+ * Fall 2016
+ */
+
 package assignment5;
 
 public class InvalidCritterException extends Exception {

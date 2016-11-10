@@ -1,3 +1,15 @@
+/* CRITTERS GUI Main.java
+ * EE422C Project 4b submission by
+ * Josh Minor
+ * jm78724
+ * 16445
+ * Andrew Guilbeau
+ * abg926
+ * 16460
+ * Slip days used: <0>
+ * Fall 2016
+ */
+
 package assignment5;
 
 import javafx.geometry.HPos;
@@ -63,6 +75,9 @@ public class Main extends Application{
 		critterDisplay.show();
 	}
 	
+	/*
+	 * Sets up the introduction page for application
+	 */
 	public static void setIntro(Stage window){
 		Image image = new Image("CritterIntro.png");
 		ImageView iv = new ImageView();
@@ -116,6 +131,9 @@ public class Main extends Application{
 		}
 	}
 	
+	/*
+	 * sets up the control panel for the application
+	 */
 	public static void setMain(Stage window){
 		CritterButtons.stepCount.setPromptText("Enter Number of Steps");
 		CritterButtons.seedCount.setPromptText("Enter Seed Number");
@@ -134,46 +152,53 @@ public class Main extends Application{
 		VBox vbox = new VBox();
 		border.setCenter(vbox);
 		
+		//Set up seed user control
 		VBox seedSection = new VBox(10);
 		Label seedTitle = new Label("Set Seed Number:");
 		seedTitle.setFont(new Font(18));
 		seedSection.getChildren().add(seedTitle);
-		seedSection.setPadding(new Insets(10,20,10,20));
+		seedSection.setPadding(new Insets(10,20,0,20));
 		HBox seed = new HBox(10);
 		seed.getChildren().add(CritterButtons.seedCount);
 		seed.getChildren().add(CritterButtons.seedButton);
 		seedSection.getChildren().add(seed);
+		seedSection.getChildren().add(CritterButtons.errorMessageSeed);
 		vbox.getChildren().add(seedSection);
 		
+		//set up step user control
 		VBox stepSection = new VBox(10);
 		Label stepTitle = new Label("Set Step Number:");
 		stepTitle.setFont(new Font(18));
 		stepSection.getChildren().add(stepTitle);
-		stepSection.setPadding(new Insets(10,20,10,20));
+		stepSection.setPadding(new Insets(10,20,0,20));
 		HBox step = new HBox(10);
 		step.getChildren().add(CritterButtons.stepCount);
 		step.getChildren().add(CritterButtons.stepButton);
 		stepSection.getChildren().add(step);
+		stepSection.getChildren().add(CritterButtons.errorMessageStep);
 		vbox.getChildren().add(stepSection);
 		
+		//set up make critter user control
 		VBox makeSection = new VBox(10);
 		Label makeTitle = new Label("Set Make Number:");
 		makeTitle.setFont(new Font(18));
 		makeSection.getChildren().add(makeTitle);
-		makeSection.setPadding(new Insets(10,20,10,20));
+		makeSection.setPadding(new Insets(10,20,0,20));
 		HBox make = new HBox(10);
 		make.getChildren().add(CritterButtons.makeCount);
 		make.getChildren().add(CritterButtons.critterSelection);
 		make.getChildren().add(CritterButtons.makeButton);
 		makeSection.getChildren().add(make);
+		makeSection.getChildren().add(CritterButtons.errorMessageMake);
 		vbox.getChildren().add(makeSection);
 		
+		//set up stats critter control
 		HBox stats = new HBox(10);
 		Label instructions = new Label("Choose a critter to observe:");
 		instructions.setFont(new Font(18));
 		stats.getChildren().add(instructions);
 		stats.getChildren().add(CritterButtons.critterStatsSelection);
-		stats.setPadding(new Insets(10,20,10,20));
+		stats.setPadding(new Insets(10,20,0,20));
 		vbox.getChildren().add(stats);
 		
 		VBox statField = new VBox();
@@ -182,9 +207,10 @@ public class Main extends Application{
 		CritterButtons.statsField.setWrapText(true);
 		CritterButtons.statsField.setText("Stats Displayed Here");
 		statField.getChildren().add(CritterButtons.statsField);
-		statField.setPadding(new Insets(10,20,25,20));
+		statField.setPadding(new Insets(0,20,30,20));
 		vbox.getChildren().add(statField);
 		
+		//set up animation user control
 		VBox animationSection = new VBox();
 		Label aTitle = new Label("Set Animation:");
 		aTitle.setFont(new Font(18));
@@ -199,7 +225,6 @@ public class Main extends Application{
 		speed.setAlignment(Pos.CENTER);
 		animationSection.getChildren().add(speed);
 		
-		
 		HBox run = new HBox(10);
 		run.getChildren().add(CritterButtons.animationButton);
 		run.setPadding(new Insets(10,20,10,20));
@@ -208,6 +233,7 @@ public class Main extends Application{
 		animationSection.setAlignment(Pos.CENTER);
 		vbox.getChildren().add(animationSection);
 		
+		//set up quit button
 		HBox quit = new HBox(10);
 		quit.getChildren().add(CritterButtons.quitButton);
 		quit.setPadding(new Insets(10,20,10,20));
@@ -215,27 +241,8 @@ public class Main extends Application{
 		vbox.getChildren().add(quit);
 		
 		
-		Scene s = new Scene(border,500,590);
+		Scene s = new Scene(border,500,660);
 		window.setScene(s);
-		
-		/*
-		VBox vbox = new VBox();
-		vbox.getChildren().add(new Text("Control Panel"));
-		vbox.getChildren().add(CritterButtons.seedCount);
-		vbox.getChildren().add(CritterButtons.seedButton);
-		vbox.getChildren().add(CritterButtons.stepCount);
-		vbox.getChildren().add(CritterButtons.stepButton);
-		vbox.getChildren().add(CritterButtons.critterSelection);
-		vbox.getChildren().add(CritterButtons.makeCount);
-		vbox.getChildren().add(CritterButtons.makeButton);
-		vbox.getChildren().add(CritterButtons.critterStatsSelection);
-		vbox.getChildren().add(CritterButtons.statsField);
-		vbox.getChildren().add(CritterButtons.runSpeed);
-		vbox.getChildren().add(CritterButtons.animationButton);
-		vbox.getChildren().add(CritterButtons.quitButton);
-		Scene s = new Scene(vbox, 500, 500);
-		window.setScene(s);
-		*/
 	}
 }
 
